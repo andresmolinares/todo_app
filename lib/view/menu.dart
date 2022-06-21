@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/view/todo.dart';
-import 'package:todo_app/view/widgets/bottom_textfield.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class _MenuS extends State<Menu> {
       'Home',
       style: optionStyle,
     ),
-    BottomTextField(),
+    Todo(),
     Text(
       'About',
       style: optionStyle,
@@ -58,7 +57,7 @@ class _MenuS extends State<Menu> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue[800],
+          selectedItemColor: const Color(0xFF460505),
           onTap: _onItemTapped,
         ));
   }

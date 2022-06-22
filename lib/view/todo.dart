@@ -15,7 +15,11 @@ class CustomCard extends StatefulWidget {
   bool isActive;
   final Function updateState;
 
-  CustomCard({Key? key, required this.description, required this.isActive, required this.updateState})
+  CustomCard(
+      {Key? key,
+      required this.description,
+      required this.isActive,
+      required this.updateState})
       : super(key: key);
 
   @override
@@ -23,7 +27,6 @@ class CustomCard extends StatefulWidget {
 }
 
 class _CustomCardState extends State<CustomCard> {
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -58,12 +61,11 @@ class _CustomCardState extends State<CustomCard> {
                     children: <Widget>[
                       Text(widget.description,
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold,
-                              decoration: widget.isActive 
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none
-                          )
-                      )
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              decoration: widget.isActive
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none))
                     ]),
               ),
             ],
@@ -75,9 +77,8 @@ class _CustomCardState extends State<CustomCard> {
 }
 
 class _TodoState extends State<Todo> {
-
   List<ToDoItem> todos = [];
-  FirebaseConnection firebaseConnection = FirebaseConnection(); 
+  FirebaseConnection firebaseConnection = FirebaseConnection();
   late ResponseFirebase responseFirebase;
 
   Future<void> getFirebaseData() async {
@@ -102,7 +103,6 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
-
     if (todos.isEmpty) {
       getFirebaseData();
     }
@@ -143,13 +143,18 @@ class _TodoState extends State<Todo> {
                     backgroundColor: const Color(0xFF460505),
                     onPressed: () {
                       // TODO: create automated integer ids
-                      firebaseConnection.instanceFirebase().child("todos/6").set({
+                      if (_controller.text.isNotEmpty) {
+                        firebaseConnection
+                            .instanceFirebase()
+                            .child("todos/6")
+                            .set({
                           "id": "6",
                           "description": _controller.text,
                           "isActive": false
-                        }
-                      );
-                      getFirebaseData();
+                        });
+                        _controller.clear();
+                        getFirebaseData();
+                      }
                     },
                     child: const Icon(Icons.add))
               ],
@@ -162,8 +167,7 @@ class _TodoState extends State<Todo> {
               return CustomCard(
                   description: todos[index].description,
                   isActive: todos[index].isActive,
-                  updateState: () => updateState(todos[index])
-              );
+                  updateState: () => updateState(todos[index]));
             },
           ),
         )

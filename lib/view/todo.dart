@@ -162,7 +162,6 @@ class _TodoState extends State<Todo> {
                     onPressed: () {
                       if (_controller.text.isNotEmpty) {
                         count = count + 1;
-                        print(count);
                         //get id in list
                         firebaseConnection
                             .instanceFirebase()

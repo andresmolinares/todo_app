@@ -16,9 +16,9 @@ class FirebaseConnection {
       final data = json.encode(snapshot.value);
       final dataDecoded = json.decode(data);
       Map<String, dynamic> response = {};
-      print(dataDecoded);
+      // print(dataDecoded.runtimeType);
       // dataDecoded.removeWhere((value) => value == null);
-      dataDecoded!.forEach((item) {
+      dataDecoded.forEach((item) {
         if (item != null) {
           response[item["id"]] = item;
         }

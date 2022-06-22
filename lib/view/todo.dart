@@ -16,13 +16,12 @@ class CustomCard extends StatefulWidget {
   final Function updateState;
   final Function deleteItem;
 
-  CustomCard({
-    Key? key, 
-    required this.description, 
-    required this.isActive, 
-    required this.updateState,
-    required this.deleteItem
-  })
+  CustomCard(
+      {Key? key,
+      required this.description,
+      required this.isActive,
+      required this.updateState,
+      required this.deleteItem})
       : super(key: key);
 
   @override
@@ -105,7 +104,10 @@ class _TodoState extends State<Todo> {
   }
 
   void deleteItem(toDoItem) {
-    firebaseConnection.instanceFirebase().child('todos/${toDoItem.id}').remove();
+    firebaseConnection
+        .instanceFirebase()
+        .child('todos/${toDoItem.id}')
+        .remove();
     getFirebaseData();
   }
 
@@ -118,11 +120,11 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
-    int count = 1;
-    count = todos.length + 1;
     if (todos.isEmpty) {
       getFirebaseData();
     }
+    int count = todos.isEmpty ? 0 : int.parse(todos.last.id.toString());
+
     return Scaffold(
         body: Column(
       children: <Widget>[
@@ -159,6 +161,9 @@ class _TodoState extends State<Todo> {
                     backgroundColor: const Color(0xFF460505),
                     onPressed: () {
                       if (_controller.text.isNotEmpty) {
+                        count = count + 1;
+                        print(count);
+                        //get id in list
                         firebaseConnection
                             .instanceFirebase()
                             .child('todos/$count')
@@ -180,10 +185,10 @@ class _TodoState extends State<Todo> {
             itemCount: todos.length,
             itemBuilder: (context, index) {
               return CustomCard(
-                  description: todos[index].description,
-                  isActive: todos[index].isActive,
-                  updateState: () => updateState(todos[index]),
-                  deleteItem: () => deleteItem(todos[index]),
+                description: todos[index].description,
+                isActive: todos[index].isActive,
+                updateState: () => updateState(todos[index]),
+                deleteItem: () => deleteItem(todos[index]),
               );
             },
           ),

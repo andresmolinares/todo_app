@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/view/home.dart';
+import 'package:todo_app/view/profile.dart';
 import 'package:todo_app/view/todo.dart';
 
 class Menu extends StatefulWidget {
@@ -14,15 +16,9 @@ class _MenuS extends State<Menu> {
       TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home',
-      style: optionStyle,
-    ),
+    Home(),
     Todo(),
-    Text(
-      'About',
-      style: optionStyle,
-    ),
+    Profile(),
   ];
 
   void _onItemTapped(int index) {
@@ -53,7 +49,7 @@ class _MenuS extends State<Menu> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              label: 'About',
+              label: 'Profile',
             ),
           ],
           currentIndex: _selectedIndex,

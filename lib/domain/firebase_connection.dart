@@ -17,9 +17,10 @@ class FirebaseConnection {
       final dataDecoded = json.decode(data);
       Map<String, dynamic> response = {};
       print(dataDecoded);
+      dataDecoded.removeWhere((value) => value == null);
       dataDecoded.forEach((item) {
         if (item != null) {
-          response[item["description"]] = item;
+          response[item["id"]] = item;
         }
       });
 

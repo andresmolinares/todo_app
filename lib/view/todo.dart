@@ -13,8 +13,9 @@ class Todo extends StatefulWidget {
 class CustomCard extends StatefulWidget {
   final String description;
   bool isActive;
+  final Function updateState;
 
-  CustomCard({Key? key, required this.description, required this.isActive})
+  CustomCard({Key? key, required this.description, required this.isActive, required this.updateState})
       : super(key: key);
 
   @override
@@ -47,6 +48,7 @@ class _CustomCardState extends State<CustomCard> {
                     setState(() {
                       widget.isActive = value!;
                     });
+                    widget.updateState();
                   }),
               const SizedBox(width: 20),
               Expanded(
@@ -55,8 +57,13 @@ class _CustomCardState extends State<CustomCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(widget.description,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold))
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold,
+                              decoration: widget.isActive 
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none
+                          )
+                      )
                     ]),
               ),
             ],
@@ -69,8 +76,6 @@ class _CustomCardState extends State<CustomCard> {
 
 class _TodoState extends State<Todo> {
 
-  // Verify
-
   List<ToDoItem> todos = [];
   FirebaseConnection firebaseConnection = FirebaseConnection(); 
   late ResponseFirebase responseFirebase;
@@ -78,28 +83,17 @@ class _TodoState extends State<Todo> {
   Future<void> getFirebaseData() async {
     final data = await firebaseConnection.getData('todos');
     final responseFirebase = ResponseFirebase.fromJson(data);
-    print(responseFirebase.response![0].description);
     setState(() => todos = responseFirebase.response!);
   }
 
-  //
-
+  void updateState(toDoItem) {
+    firebaseConnection.instanceFirebase().child('todos/${toDoItem.id}').update({
+      "isActive": (toDoItem.isActive) ? false : true,
+    });
+    getFirebaseData();
+  }
 
   final _controller = TextEditingController();
-  // final List<Map<String, dynamic>> todos = const [
-  //   {
-  //     "description": "Make a todo app",
-  //     "isActive": true,
-  //   },
-  //   {
-  //     "description": "Read a book",
-  //     "isActive": false,
-  //   },
-  //   {
-  //     "description": "Learn Flutter",
-  //     "isActive": true,
-  //   },
-  // ];
   @override
   void dispose() {
     _controller.dispose();
@@ -148,14 +142,14 @@ class _TodoState extends State<Todo> {
                 FloatingActionButton.small(
                     backgroundColor: const Color(0xFF460505),
                     onPressed: () {
+                      // TODO: create automated integer ids
                       firebaseConnection.instanceFirebase().child("todos/6").set({
-                          "_id": "6",
+                          "id": "6",
                           "description": _controller.text,
                           "isActive": false
                         }
                       );
                       getFirebaseData();
-                      print(_controller.text);
                     },
                     child: const Icon(Icons.add))
               ],
@@ -167,7 +161,9 @@ class _TodoState extends State<Todo> {
             itemBuilder: (context, index) {
               return CustomCard(
                   description: todos[index].description,
-                  isActive: todos[index].isActive);
+                  isActive: todos[index].isActive,
+                  updateState: () => updateState(todos[index])
+              );
             },
           ),
         )

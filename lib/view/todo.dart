@@ -103,10 +103,11 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
+    int count = 1;
+    count = todos.length + 1;
     if (todos.isEmpty) {
       getFirebaseData();
     }
-
     return Scaffold(
         body: Column(
       children: <Widget>[
@@ -142,13 +143,12 @@ class _TodoState extends State<Todo> {
                 FloatingActionButton.small(
                     backgroundColor: const Color(0xFF460505),
                     onPressed: () {
-                      // TODO: create automated integer ids
                       if (_controller.text.isNotEmpty) {
                         firebaseConnection
                             .instanceFirebase()
-                            .child("todos/6")
+                            .child('todos/$count')
                             .set({
-                          "id": "6",
+                          "id": '$count',
                           "description": _controller.text,
                           "isActive": false
                         });

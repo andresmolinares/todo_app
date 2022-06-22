@@ -1,6 +1,7 @@
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
+import '../entities/todoitem.dart';
+import '../entities/response_firebase.dart';
+import '../domain/firebase_connection.dart';
 
 class Todo extends StatefulWidget {
   const Todo({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class CustomCard extends StatefulWidget {
 }
 
 class _CustomCardState extends State<CustomCard> {
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -66,21 +68,38 @@ class _CustomCardState extends State<CustomCard> {
 }
 
 class _TodoState extends State<Todo> {
+
+  // Verify
+
+  List<ToDoItem> todos = [];
+  FirebaseConnection firebaseConnection = FirebaseConnection(); 
+  late ResponseFirebase responseFirebase;
+
+  Future<void> getFirebaseData() async {
+    final data = await firebaseConnection.getData('todos');
+    final responseFirebase = ResponseFirebase.fromJson(data);
+    print(responseFirebase.response![0].description);
+    setState(() => todos = responseFirebase.response!);
+  }
+
+  //
+
+
   final _controller = TextEditingController();
-  final List<Map<String, dynamic>> todos = const [
-    {
-      "description": "Make a todo app",
-      "isActive": true,
-    },
-    {
-      "description": "Read a book",
-      "isActive": false,
-    },
-    {
-      "description": "Learn Flutter",
-      "isActive": true,
-    },
-  ];
+  // final List<Map<String, dynamic>> todos = const [
+  //   {
+  //     "description": "Make a todo app",
+  //     "isActive": true,
+  //   },
+  //   {
+  //     "description": "Read a book",
+  //     "isActive": false,
+  //   },
+  //   {
+  //     "description": "Learn Flutter",
+  //     "isActive": true,
+  //   },
+  // ];
   @override
   void dispose() {
     _controller.dispose();
@@ -89,6 +108,11 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
+
+    if (todos.isEmpty) {
+      getFirebaseData();
+    }
+
     return Scaffold(
         body: Column(
       children: <Widget>[
@@ -124,6 +148,13 @@ class _TodoState extends State<Todo> {
                 FloatingActionButton.small(
                     backgroundColor: const Color(0xFF460505),
                     onPressed: () {
+                      firebaseConnection.instanceFirebase().child("todos/6").set({
+                          "_id": "6",
+                          "description": _controller.text,
+                          "isActive": false
+                        }
+                      );
+                      getFirebaseData();
                       print(_controller.text);
                     },
                     child: const Icon(Icons.add))
@@ -135,8 +166,8 @@ class _TodoState extends State<Todo> {
             itemCount: todos.length,
             itemBuilder: (context, index) {
               return CustomCard(
-                  description: todos[index]['description'],
-                  isActive: todos[index]['isActive']);
+                  description: todos[index].description,
+                  isActive: todos[index].isActive);
             },
           ),
         )

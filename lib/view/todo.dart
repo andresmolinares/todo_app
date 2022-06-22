@@ -14,8 +14,15 @@ class CustomCard extends StatefulWidget {
   final String description;
   bool isActive;
   final Function updateState;
+  final Function deleteItem;
 
-  CustomCard({Key? key, required this.description, required this.isActive, required this.updateState})
+  CustomCard({
+    Key? key, 
+    required this.description, 
+    required this.isActive, 
+    required this.updateState,
+    required this.deleteItem
+  })
       : super(key: key);
 
   @override
@@ -66,6 +73,13 @@ class _CustomCardState extends State<CustomCard> {
                       )
                     ]),
               ),
+              IconButton(
+                icon: Icon(Icons.clear, color: Color(0xFF460505)),
+                tooltip: 'Delete item',
+                onPressed: () {
+                  widget.deleteItem();
+                },
+              )
             ],
           ),
         ),
@@ -90,6 +104,11 @@ class _TodoState extends State<Todo> {
     firebaseConnection.instanceFirebase().child('todos/${toDoItem.id}').update({
       "isActive": (toDoItem.isActive) ? false : true,
     });
+    getFirebaseData();
+  }
+
+  void deleteItem(toDoItem) {
+    firebaseConnection.instanceFirebase().child('todos/${toDoItem.id}').remove();
     getFirebaseData();
   }
 
@@ -162,7 +181,8 @@ class _TodoState extends State<Todo> {
               return CustomCard(
                   description: todos[index].description,
                   isActive: todos[index].isActive,
-                  updateState: () => updateState(todos[index])
+                  updateState: () => updateState(todos[index]),
+                  deleteItem: () => deleteItem(todos[index]),
               );
             },
           ),

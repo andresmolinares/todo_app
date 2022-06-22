@@ -5,8 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 class FirebaseConnection {
 
   DatabaseReference instanceFirebase() {
-    FirebaseDatabase _database = FirebaseDatabase.instance;
-    return _database.ref('');
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    return database.ref('');
   }
 
   Future<Map<String, dynamic>> getData(String path) async {
@@ -17,8 +17,8 @@ class FirebaseConnection {
       final dataDecoded = json.decode(data);
       Map<String, dynamic> response = {};
       print(dataDecoded);
-      dataDecoded.removeWhere((value) => value == null);
-      dataDecoded.forEach((item) {
+      // dataDecoded.removeWhere((value) => value == null);
+      dataDecoded!.forEach((item) {
         if (item != null) {
           response[item["id"]] = item;
         }
